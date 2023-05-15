@@ -10,7 +10,5 @@ This assignment will be based on a subset of the Electricity Consumption and Occ
 
 Data from three households are provided, comprising  power consumption overall (from smart meters) and particular plugs/appliances per second over a period of time. For the smart meter data, the primary interest is the variable `powerallphases` which is the sum of real power over all power phases consumed in the household. The plugs data provides appliance-level consumption. 
 
-State clearly the question(s) you want to address with your two graphics. There are many dimensions to explore, so don't necessarily restrict yourself to a simple time-series of a variable, which is obvious. 
-
 
 
