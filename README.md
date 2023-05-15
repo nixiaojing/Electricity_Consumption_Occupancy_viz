@@ -2,7 +2,7 @@
 
 ## Overview
 
-The goal of this repo is to implement interactive and animated visualizations of Electricity Consumption and Occupancy (ECO) data. These are two interactive plots generated using `Plotly` and `Altair` packages in Python. Data are processed by R. 
+The goal of this repo is to implement interactive and animated visualizations of Electricity Consumption and Occupancy (ECO) data. These are two interactive plots generated using `Plotly` and `Altair` packages in Python. Data are processed by R. And the report is generated using Quarto. 
 
 ## Data
 
