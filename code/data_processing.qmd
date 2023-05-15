@@ -1,0 +1,573 @@
+---
+title: "Data processing"
+author: "Xiaojing Ni"
+format:
+    html:
+        embed-resources: true
+        theme: default
+        code-copy: true
+        code-fold: true
+        code-line-numbers: true
+        toc: true
+        toc-depth: 4
+        link-external-icon: true
+        link-external-newwindow: true
+---
+```{r echo=FALSE}
+#| echo: FALSE
+library(dplyr)
+library(data.table)
+```
+
+# Plug data
+## Daily average consumption by household
+1. Read data
+```{r}
+## read data
+
+## plug 04 household
+## Measurement period:
+## 27.06.12 to 23.01.13
+
+## 01: Fridge (no. days: 194, coverage: 97.01%)
+## 02: Kitchen appliances (no. days: 194, coverage: 96.81%) (*)
+## 03: Lamp (no. days: 170, coverage: 93.54%) (**)
+## 04: Stereo and laptop (no. days: 169, coverage: 90.98%)
+## 05: Freezer (no. days: 192, coverage: 93.08%)
+## 06: Tablet (no. days: 189, coverage: 93.6%)
+## 07: Entertainment (no. days: 186, coverage: 94.69%) (***)
+## 08: Microwave (no. days: 194, coverage: 97.08%)
+
+appliance <- c("01", "02", "03", "04", "05", "06", "07", "08")
+for (a in appliance) {
+  file_list <-
+    list.files(
+      path = paste0("../../eco/04_plug/", a),
+      pattern = ".csv",
+      all.files = FALSE,
+      full.names = FALSE
+    )
+  
+  ## initiate variable name for each applicance
+  df_name <- paste0("p04_", a)
+  
+  for (file in file_list) {
+    path <- paste0("../../eco/04_plug/", a, "/", file)
+    
+    # if the merged dataset doesn't exist, create it
+    if (!exists(df_name)) {
+      temp <- read.table(path, header = FALSE)
+      colnames(temp) <- substr(file, 1, 10)
+      assign(df_name, temp)
+      rm(temp)
+      next
+    }
+    
+    # if the merged dataset does exist, append to it
+    if (exists(df_name)) {
+      temp_dataset <- read.table(path, header = FALSE)
+      colnames(temp_dataset) <- substr(file, 1, 10)
+      temp <- cbind(get(df_name), temp_dataset)
+      assign(df_name, temp)
+      rm(temp_dataset, temp)
+    }
+  }
+}
+
+## read data
+
+## plug 05 household
+# Measurement period:
+# 27.06.12 to 31.01.13
+#
+# 01: Tablet (no. days: 218, coverage: 97.87%)
+# 02: Coffee machine (no. days: 218, coverage: 95.16%)
+# 03: Fountain (no. days: 71, coverage: 99.43%) (*)
+# 04: Microwave (no. days: 218, coverage: 97.87%)
+# 05: Fridge (no. days: 218, coverage: 97.87%)
+# 06: Entertainment (no. days: 192, coverage: 89.14%) (**)
+# 07: PC (no. days: 218, coverage: 97.87%) (***)
+# 08: Kettle (no. days: 25, coverage: 76.64%)
+
+appliance <- c("01", "02", "03", "04", "05", "06", "07", "08")
+for (a in appliance) {
+  file_list <-
+    list.files(
+      path = paste0("../../eco/05_plug/", a),
+      pattern = ".csv",
+      all.files = FALSE,
+      full.names = FALSE
+    )
+  
+  ## initiate variable name for each applicance
+  df_name <- paste0("p05_", a)
+  
+  for (file in file_list) {
+    path <- paste0("../../eco/05_plug/", a, "/", file)
+    
+    # if the merged dataset doesn't exist, create it
+    if (!exists(df_name)) {
+      temp <- read.table(path, header = FALSE)
+      colnames(temp) <- substr(file, 1, 10)
+      assign(df_name, temp)
+      rm(temp)
+      next
+    }
+    
+    # if the merged dataset does exist, append to it
+    if (exists(df_name)) {
+      temp_dataset <- read.table(path, header = FALSE)
+      colnames(temp_dataset) <- substr(file, 1, 10)
+      temp <- cbind(get(df_name), temp_dataset)
+      assign(df_name, temp)
+      rm(temp_dataset, temp)
+    }
+  }
+}
+
+## read data
+
+## plug 06 household
+# PLUG DATA
+# ---------
+#
+# Measurement period:
+# 27.06.12 to 31.01.13
+#
+# 01: Lamp (no. days: 166, coverage: 67.2%)
+# 02: Laptop (no. days: 185, coverage: 97.3%) (*)
+# 03: Router (no. days: 88, coverage: 96.73%) (**)
+# 04: Coffee machine (no. days: 179, coverage: 86.03%)
+# 05: Entertainment (no. days: 181, coverage: 95.86%) (***)
+# 06: Fridge (no. days: 179, coverage: 95.78%)
+# 07: Kettle (no. days: 147, coverage: 82.54%)
+
+appliance <- c("01", "02", "03", "04", "05", "06", "07")
+for (a in appliance) {
+  file_list <-
+    list.files(
+      path = paste0("../../eco/06_plug/", a),
+      pattern = ".csv",
+      all.files = FALSE,
+      full.names = FALSE
+    )
+  
+  ## initiate variable name for each applicance
+  df_name <- paste0("p06_", a)
+  
+  for (file in file_list) {
+    path <- paste0("../../eco/06_plug/", a, "/", file)
+    
+    # if the merged dataset doesn't exist, create it
+    if (!exists(df_name)) {
+      temp <- read.table(path, header = FALSE)
+      colnames(temp) <- substr(file, 1, 10)
+      assign(df_name, temp)
+      rm(temp)
+      next
+    }
+    
+    # if the merged dataset does exist, append to it
+    if (exists(df_name)) {
+      temp_dataset <- read.table(path, header = FALSE)
+      colnames(temp_dataset) <- substr(file, 1, 10)
+      temp <- cbind(get(df_name), temp_dataset)
+      assign(df_name, temp)
+      rm(temp_dataset, temp)
+    }
+  }
+}
+```
+2. Replace negative values (missing values) as NA
+```{r}
+households <- c("04", "05", "06")
+appliance <- c("01", "02", "03", "04", "05", "06", "07", "08")
+
+for (household in households) {
+  for (a in appliance) {
+    if (!(household == "06" && a == "08")) {
+      df <- get(paste0("p", household, "_", a))
+      df <- replace(df, df < 0, NA)
+      assign(paste0("p", household, "_", a),df)
+    }
+    
+  }
+}
+```
+3. Compute daily average hourly consumption by each household and each appliance. 
+```{r}
+
+daily_consum <- function(household) {
+  
+  # create empty df for res
+  daily_power <- data.frame(matrix(ncol = 5, nrow = 0))
+
+  #provide column names
+  colnames(daily_power) <- c('household', 'daily_avg', 'appliance','hour','hour_avg')
+
+  
+  for (a in appliance) {
+    if (household != "06") {
+      df <- get(paste0("p", household, "_", a))
+      
+      ## compute hourly average through out all the days having data
+      hour_avg <-
+        rowMeans(aggregate(
+          df,
+          list(rep(
+            1:(nrow(df) %/% 3600 + 1),
+            each = 3600,
+            len = nrow(df)
+          )),
+          sum,
+          na.rm = TRUE,
+          na.action = NULL
+        )[-1]/ 3600000)
+      
+      
+      
+      curr_a_power <- data.frame(
+        household = rep(household, 24),
+        daily_avg = rep(daily_avg, 24),
+        appliance = rep(a, 24),
+        hour = seq.int(24),
+        hour_avg = hour_avg
+      )
+    }
+    else {
+      if (a != "08") {
+        df <- get(paste0("p", household, "_", a))
+        hour_avg <-
+          rowMeans(aggregate(
+            df,
+            list(rep(
+              1:(nrow(df) %/% 3600 + 1),
+              each = 3600,
+              len = nrow(df)
+            )),
+            sum,
+            na.rm = TRUE,
+            na.action = NULL
+          )[-1]/ 3600000)
+        
+        
+        curr_a_power <- data.frame(
+          household = rep(household, 24),
+          daily_avg = rep(daily_avg, 24),
+          appliance = rep(a, 24),
+          hour = seq.int(24),
+          hour_avg = hour_avg
+        )
+        
+      }
+      else {return(daily_power)}
+    }
+  
+  daily_power <- rbind(daily_power, curr_a_power)
+  
+  }
+  return(daily_power)
+}
+
+daily_power <-
+  bind_rows(lapply(households, daily_consum), .id = "column_label")
+
+```
+4. Daily total by 8 appliances of each household 
+```{r}
+daily_total_app <- daily_power %>% group_by(household) %>% 
+  summarise(sum_app=sum(hour_avg),
+            .groups = 'drop')
+
+daily_power$daily_avg <- daily_total_app$sum_app[match(unlist(daily_power$household), daily_total_app$household)]
+```
+4. Save the data
+```{r}
+write.csv(daily_power, "../data/daily_consum.csv", row.names=FALSE)
+
+```
+# Smart meter data
+
+## Hourly total consumption (watt * time) for different phase
+
+1. Read data
+```{r}
+## read data
+
+## 04 household
+# SMART METER DATA
+# ----------------
+#
+# Measurement period:
+# 27.06.12 to 31.01.13
+#
+# Coverage:
+# No. days: 219, Coverage: 99.39%
+
+
+file_list <-
+  list.files(
+    path = paste0("../../eco/04_sm"),
+    pattern = ".csv",
+    all.files = FALSE,
+    full.names = FALSE
+  )
+
+
+
+for (file in file_list) {
+  path <- paste0("../../eco/04_sm/", file)
+  
+  for (phase in 0:3) {
+    # if the merged dataset doesn't exist, create it
+    
+    ## initiate variable name for each phase
+    df_phase <- paste0("s04_", phase)
+    
+    if (!exists(df_phase)) {
+      temp <- read.csv(path, header = FALSE)
+      temp <- data.frame(temp[, phase + 1])
+      colnames(temp) <- substr(file, 1, 10)
+      assign(df_phase, temp)
+      rm(temp)
+      next
+    }
+    
+    # if the merged dataset does exist, append to it
+    if (exists(df_phase)) {
+      temp_dataset <- read.csv(path, header = FALSE)
+      temp_dataset <- data.frame(temp_dataset[, phase + 1])
+      colnames(temp_dataset) <- substr(file, 1, 10)
+      temp <- cbind(get(df_phase), temp_dataset)
+      assign(df_phase, temp)
+      rm(temp_dataset, temp)
+    }
+  }
+}
+
+## 05 household
+
+# SMART METER DATA
+# ----------------
+# 
+# Measurement period:
+# 27.06.12 to 31.01.13
+# 
+# Coverage:
+# No. days: 215, Coverage: 99.05%
+
+
+file_list <-
+  list.files(
+    path = paste0("../../eco/05_sm"),
+    pattern = ".csv",
+    all.files = FALSE,
+    full.names = FALSE
+  )
+
+
+
+for (file in file_list) {
+  path <- paste0("../../eco/05_sm/", file)
+  
+  for (phase in 0:3) {
+    # if the merged dataset doesn't exist, create it
+    
+    ## initiate variable name for each phase
+    df_phase <- paste0("s05_", phase)
+    
+    if (!exists(df_phase)) {
+      temp <- read.csv(path, header = FALSE)
+      temp <- data.frame(temp[, phase + 1])
+      colnames(temp) <- substr(file, 1, 10)
+      assign(df_phase, temp)
+      rm(temp)
+      next
+    }
+    
+    # if the merged dataset does exist, append to it
+    if (exists(df_phase)) {
+      temp_dataset <- read.csv(path, header = FALSE)
+      temp_dataset <- data.frame(temp_dataset[, phase + 1])
+      colnames(temp_dataset) <- substr(file, 1, 10)
+      temp <- cbind(get(df_phase), temp_dataset)
+      assign(df_phase, temp)
+      rm(temp_dataset, temp)
+    }
+  }
+}
+
+## 06 household
+
+# SMART METER DATA
+# ----------------
+# 
+# Measurement period:
+# 27.06.12 to 31.01.13
+# 
+# Coverage:
+# No. days: 166, Coverage: 99.67%
+
+
+file_list <-
+  list.files(
+    path = paste0("../../eco/06_sm"),
+    pattern = ".csv",
+    all.files = FALSE,
+    full.names = FALSE
+  )
+
+
+
+for (file in file_list) {
+  path <- paste0("../../eco/06_sm/", file)
+  
+  for (phase in 0:3) {
+    # if the merged dataset doesn't exist, create it
+    
+    ## initiate variable name for each phase
+    df_phase <- paste0("s06_", phase)
+    
+    if (!exists(df_phase)) {
+      temp <- read.csv(path, header = FALSE)
+      temp <- data.frame(temp[, phase + 1])
+      colnames(temp) <- substr(file, 1, 10)
+      assign(df_phase, temp)
+      rm(temp)
+      next
+    }
+    
+    # if the merged dataset does exist, append to it
+    if (exists(df_phase)) {
+      temp_dataset <- read.csv(path, header = FALSE)
+      temp_dataset <- data.frame(temp_dataset[, phase + 1])
+      colnames(temp_dataset) <- substr(file, 1, 10)
+      temp <- cbind(get(df_phase), temp_dataset)
+      assign(df_phase, temp)
+      rm(temp_dataset, temp)
+    }
+  }
+}
+```
+
+2. Replace negative values (missing values) as NA
+```{r}
+households <- c("04", "05", "06")
+
+for (household in households) {
+  for (phase in 0:3) {
+    df <- get(paste0("s", household, "_", phase))
+    df <- replace(df, df < 0, NA)
+    assign(paste0("s", household, "_", phase),df)
+    
+  }
+}
+```
+3. Compute 10min total consumption for each phase, kwh
+```{r}
+
+semihour_consum <- function(household) {
+  # create empty df for res
+  semihour <- data.frame(matrix(ncol = 3, nrow = 0))
+
+  #provide column names
+  colnames(semihour) <- c('household', 'phase', 'semihour_total')
+  
+  for (phase in 0:3) {
+    
+      df <- get(paste0("s", household, "_", phase))
+      
+      # daily_total <-
+      #   colSums(df,
+      #     na.rm = TRUE) / 3600000
+      
+      semihour_t <-
+        rowMeans(aggregate(
+          df,
+          list(rep(
+            1:(nrow(df) %/% 600 + 1),
+            each = 600,
+            len = nrow(df)
+          )),
+          sum,
+          na.rm = TRUE,
+          na.action = NULL
+        )[-1]/ 3600000)
+      
+      curr_consum <- data.frame(
+        household = rep(household, 144),
+        phase = rep(phase, 144),
+        semihour_total = semihour_t
+      )
+      semihour <- rbind(semihour, curr_consum)
+  }
+  
+  return(semihour)
+}
+
+semi_comsum <-
+  bind_rows(lapply(households, semihour_consum), .id = "column_label")
+
+```
+4. Save the data
+```{r}
+write.csv(semi_comsum, "../data/semihour_phase.csv", row.names=FALSE)
+
+```
+# Plotly data
+```{r}
+## using smart meter data, the first 2 weeks of data
+
+ten_min_day <- function(household) {
+  
+  # create empty df for res
+  res <- data.frame(matrix(ncol = 5, nrow = 0))
+
+  #provide column names
+  colnames(res) <- c('household', 'phase', 'value','date','time')
+  
+  for (phase in 0:3) {
+    
+      df <- get(paste0("s", household, "_", phase))
+      df <- df[,1:14]
+      
+      # daily_total <-
+      #   colSums(df,
+      #     na.rm = TRUE) / 3600000
+      
+      ten_d <- aggregate(
+          df,
+          list(rep(
+            1:(nrow(df) %/% 600 + 1),
+            each = 600,
+            len = nrow(df)
+          )),
+          sum,
+          na.rm = TRUE,
+          na.action = NULL
+        )[-1]/ 3600000
+      ten_d$time <- format( seq.POSIXt(as.POSIXct(Sys.Date()), as.POSIXct(Sys.Date()+1), by = "10 min"),
+          "%H:%M", tz="GMT")[1:144]
+      
+      ## convert ten_d to long format
+      ten_d_long <- melt(setDT(ten_d), id.vars = "time", variable.name = "date")
+      
+      ten_d_long$household <- rep(household, 2016)
+      ten_d_long$phase <- rep(phase, 2016)
+      
+      res <- rbind(ten_d_long,res)
+  }
+    
+    
+    return(res)
+}
+
+ten_min_day <-
+  bind_rows(lapply(households, ten_min_day), .id = "column_label")
+```
+
+Save the data
+```{r}
+write.csv(ten_min_day[,2:6], "../data/ten_min_day.csv", row.names=FALSE)
+
+```
